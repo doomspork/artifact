@@ -1,20 +1,17 @@
 # Artifact
+[![Build Status][travis-img]][travis] [![Hex Version][hex-img]][hex] [![License][license-img]][license]
 
-**TODO: Add description**
+[travis-img]: https://travis-ci.org/doomspork/artifact.png?branch=master
+[travis]: https://travis-ci.org/doomspork/artifact
+[hex-img]: https://img.shields.io/hexpm/v/artifact.svg
+[hex]: https://hex.pm/packages/artifact
+[license-img]: http://img.shields.io/badge/license-MIT-brightgreen.svg
+[license]: http://opensource.org/licenses/MIT
 
-## Installation
+___There isn't much to see here yet, Artifact is still under active development___
 
-If [available in Hex](https://hex.pm/docs/publish), the package can be installed as:
+## License
 
-  1. Add artifact to your list of dependencies in `mix.exs`:
+Artifact source code is released under Apache 2.0 License.
 
-        def deps do
-          [{:artifact, "~> 0.0.1"}]
-        end
-
-  2. Ensure artifact is started before your application:
-
-        def application do
-          [applications: [:artifact]]
-        end
-
+See [LICENSE](LICENSE) for more information.
