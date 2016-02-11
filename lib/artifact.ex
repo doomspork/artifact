@@ -1,0 +1,2 @@
+defmodule Artifact do
+end
