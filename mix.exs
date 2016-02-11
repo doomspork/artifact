@@ -1,32 +1,39 @@
 defmodule Artifact.Mixfile do
   use Mix.Project
 
+  @version "0.0.1"
+
   def project do
     [app: :artifact,
-     version: "0.0.1",
-     elixir: "~> 1.2",
      build_embedded: Mix.env == :prod,
+     deps: deps,
+     description: """
+     File upload and manipulation for Elixir
+     """,
+     elixir: "~> 1.2",
+     package: package,
+     source_url: "https://github.com/slime-lang/slime",
      start_permanent: Mix.env == :prod,
-     deps: deps]
+     version: @version]
   end
 
-  # Configuration for the OTP application
-  #
-  # Type "mix help compile.app" for more information
   def application do
     [applications: [:logger]]
   end
 
-  # Dependencies can be Hex packages:
-  #
-  #   {:mydep, "~> 0.3.0"}
-  #
-  # Or git/path repositories:
-  #
-  #   {:mydep, git: "https://github.com/elixir-lang/mydep.git", tag: "0.1.0"}
-  #
-  # Type "mix help deps" for more examples and options
-  defp deps do
-    []
+  def package do
+    [maintainers: ["Sean Callan"],
+     files: ["lib", "mix.exs", "README*", "LICENSE*"],
+     licenses: ["Apache 2.0"],
+     links: %{github: "https://github.com/doomspork/artifact"}]
+  end
+
+  def deps do
+    [
+      # Automatic test runner
+      {:mix_test_watch, ">= 0.0.0", only: :dev},
+      # Style linter
+      {:dogma, ">= 0.0.0", only: ~w(dev test)a},
+    ]
   end
 end
