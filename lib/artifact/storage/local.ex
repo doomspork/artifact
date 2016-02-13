@@ -5,12 +5,12 @@ defmodule Artifact.Storage.Local do
 
   @behaviour Artifact.Storage
 
-  @type keyword :: [{atom, any}]
+  @type opts :: [{atom, any}]
 
   @doc """
   Initialize storage instance and override config options
   """
-  @spec init(keyword) :: keyword
+  @spec init(opts) :: opts
   def init(opts \\ []) do
     path = Path.expand(opts[:storage_dir])
     File.mkdir_p!(path)
@@ -22,29 +22,23 @@ defmodule Artifact.Storage.Local do
   @doc """
   Save data to the filesystem
   """
-  @spec put(binary, String.t, keyword) :: {:ok, String.t} | {:error, String.t}
-  def put(data, filename, opts) do
-    result = filename
-              |> maybe_mkdir(opts)
-              |> copy_data(data)
+  def handle_call({:put, data, name, opts}, _from, state) do
+    result = name
+             |> maybe_mkdir(state ++ opts)
+             |> copy_data(data)
 
-    case result do
-      :ok -> {:ok, filename}
-      error -> error
-    end
-  end
+    reply = case result do
+              :ok -> name
+              error -> error
+            end
 
-  @doc """
-  Retrieve data at a given filename from the filesystem
-  """
-  @spec get(String.t, keyword) :: {:ok, binary} | {:error, String.t}
-  def get(_name, _opts) do
+    {:reply, reply, state}
   end
 
   @doc """
   Remove a file
   """
-  @spec remove(String.t, keyword) :: :ok | {:error, String.t}
+  @spec remove(String.t, opts) :: :ok | {:error, String.t}
   def remove(name, opts) do
     name
     |> full_path(opts)
