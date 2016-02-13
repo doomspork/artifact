@@ -12,7 +12,7 @@ defmodule Artifact.Mixfile do
      """,
      elixir: "~> 1.2",
      package: package,
-     source_url: "https://github.com/slime-lang/slime",
+     source_url: "https://github.com/doomspork/artifact",
      start_permanent: Mix.env == :prod,
      version: @version]
   end
