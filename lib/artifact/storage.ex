@@ -6,10 +6,12 @@ defmodule Artifact.Storage do
   @type opts :: [{atom, any}]
   @type error :: {:error, any}
   @type reply :: {:reply, any, any}
-
+  @type noreply :: {:noreply, any}
 
   @callback init(opts) :: opts
   @callback handle_call({:put, binary, String.t, opts}, pid, opts) :: reply
+
+  @callback handle_cast({:rm, String.t}, opts) :: noreply
 
   @doc false
   def start_link(opts) do
@@ -19,5 +21,12 @@ defmodule Artifact.Storage do
   @doc false
   def put(mod, data, name, opts) do
     GenServer.call(mod, {:put, data, name, opts})
+  end
+
+  @doc false
+  def rm(mod, name) do
+    GenServer.cast(mod, {:rm, name})
+
+    :ok
   end
 end

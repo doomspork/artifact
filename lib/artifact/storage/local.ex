@@ -38,11 +38,12 @@ defmodule Artifact.Storage.Local do
   @doc """
   Remove a file
   """
-  @spec remove(String.t, opts) :: :ok | {:error, String.t}
-  def remove(name, opts) do
+  def handle_cast({:rm, name}, state) do
     name
-    |> full_path(opts)
+    |> full_path(state)
     |> File.rm
+
+    {:noreply, state}
   end
 
   defp copy_data({:ok, path}, data) do

@@ -40,11 +40,19 @@ defmodule Artifact do
 
         case result do
           {:error, _reason} = error -> error
-          path -> {:ok, asset_url(path)}
+          path -> {:ok, url(path)}
         end
       end
 
-      defp asset_url(name) do
+      @doc """
+      """
+      @spec rm(String.t) :: :ok | error
+      def rm(name), do: Artifact.Storage.rm(@storage_name, name)
+
+      @doc """
+      """
+      @spec url(String.t) :: String.t
+      def url(name) do
         Path.join(@opts[:asset_url], name)
       end
     end
