@@ -6,8 +6,8 @@
 [travis]: https://travis-ci.org/doomspork/artifact
 [hex-img]: https://img.shields.io/hexpm/v/artifact.svg
 [hex]: https://hex.pm/packages/artifact
-[license-img]: http://img.shields.io/badge/license-MIT-brightgreen.svg
-[license]: http://opensource.org/licenses/MIT
+[license-img]: http://img.shields.io/badge/license-Apache-2.0-brightgreen.svg
+[license]: https://opensource.org/licenses/Apache-2.0
 
 ___There isn't much to see here yet, Artifact is still under active development___
 
@@ -22,7 +22,7 @@ If [available in Hex](https://hex.pm/docs/publish), the package can be installed
 	  [{:artifact, "~> 0.1.0"}]
 	end
 	```
-        
+
 ## Setup
 
 Define a module to handle your files:
