@@ -6,7 +6,7 @@
 [travis]: https://travis-ci.org/doomspork/artifact
 [hex-img]: https://img.shields.io/hexpm/v/artifact.svg
 [hex]: https://hex.pm/packages/artifact
-[license-img]: http://img.shields.io/badge/license-Apache-2.0-brightgreen.svg
+[license-img]: https://img.shields.io/badge/license-Apache%202.0-brightgreen.svg
 [license]: https://opensource.org/licenses/Apache-2.0
 
 ___There isn't much to see here yet, Artifact is still under active development___
