@@ -4,6 +4,7 @@
 /deps
 erl_crash.dump
 *.ez
+/test/tmp
 
 ### OSX ###
 .DS_Store
