@@ -10,4 +10,4 @@ notifications:
 script:
   - mix compile --warnings-as-errors
   - mix test
-  - mix dogma
+  - mix credo

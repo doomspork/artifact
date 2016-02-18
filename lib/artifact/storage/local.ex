@@ -61,14 +61,14 @@ defmodule Artifact.Storage.Local do
   end
 
   defp maybe_mkdir(path, opts) do
-    full_path = full_path(path, opts)
+    path = full_path(path, opts)
 
-    result = full_path
+    result = path
               |> Path.dirname
               |> File.mkdir_p
 
     case result do
-      :ok -> {:ok, full_path}
+      :ok -> {:ok, path}
       error -> error
     end
   end

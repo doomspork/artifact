@@ -33,7 +33,7 @@ defmodule Artifact.Mixfile do
       # Automatic test runner
       {:mix_test_watch, ">= 0.0.0", only: :dev},
       # Style linter
-      {:dogma, ">= 0.0.0", only: ~w(dev test)a},
+      {:credo, ">= 0.0.0", only: ~w(dev test)a},
     ]
   end
 end
