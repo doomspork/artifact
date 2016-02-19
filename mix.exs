@@ -30,6 +30,10 @@ defmodule Artifact.Mixfile do
 
   def deps do
     [
+      {:poolboy, "~> 1.5.1"},
+      {:porcelain, "~> 2.0"},
+      {:plug, "~> 1.1.1"},
+
       # Automatic test runner
       {:mix_test_watch, ">= 0.0.0", only: :dev},
       # Style linter
