@@ -1,7 +1,9 @@
 defmodule Artifact do
   @moduledoc """
-  File upload and manipulation for Elixir
+  File upload and manipulation for Elixir.
   """
+
+  @defaults [asset_url: "/images/:format/:name"]
 
   defmacro __using__(opts) do
     otp_app = Keyword.get(opts, :otp_app)
@@ -12,21 +14,52 @@ defmodule Artifact do
       @type error :: {:error, String.t}
       @type upload :: %{filename: String.t, path: String.t} | any
 
-      @storage_name storage_name = Module.concat(__MODULE__, Storage)
-      @opts Application.get_env(unquote(otp_app), __MODULE__, []) ++ unquote(opts)
+      module = __MODULE__
+      app_env = Application.get_env(unquote(otp_app), module, [])
+      opts = unquote(@defaults)
+             |> Keyword.merge(app_env)
+             |> Keyword.merge(unquote(opts))
+
+      @opts opts
+      @pool_name pool_name = Module.concat(module, Pool)
+      @storage_name storage_name = Module.concat(module, Storage)
 
       defmodule Supervisor do
         @moduledoc false
+        use Artifact.Supervisor, otp_app: unquote(otp_app),
+                                 pool: pool_name,
+                                 storage: storage_name
+      end
 
-        @storage Application.get_env(unquote(otp_app), storage_name, []) ++ [name: storage_name]
-        use Artifact.Supervisor, storage: @storage,
-                                 opts: Application.get_env(unquote(otp_app), __MODULE__, []) ++ unquote(opts)
+      defmodule Endpoint do
+        @moduledoc false
+
+        use Artifact.Endpoint, mod: module, opts: opts
+      end
+
+      defmodule URLHelpers do
+        @moduledoc false
+
+        @opts opts
+
+        @doc """
+        Helper for creating URLs for files and formats.
+        """
+        @spec url(String.t) :: String.t
+        def url(name, format \\ :original) do
+          asset_url = @opts
+                      |> Keyword.get(:asset_url)
+                      |> String.replace(":format", Atom.to_string(format))
+                      |> String.replace(":name", name)
+
+          @opts
+          |> Keyword.get(:asset_host, "/")
+          |> Path.join(asset_url)
+        end
       end
 
       @doc """
-      For working with `%Plug.Upload` structs.
-
-      See `put/3` for a list of available options.
+      Put binary data or %Plug.Upload{} into the configured storage.
       """
       @spec put(upload, opts) :: {:ok, String.t} | error
       def put(data, opts \\ [])
@@ -40,20 +73,33 @@ defmodule Artifact do
 
         case result do
           {:error, _reason} = error -> error
-          path -> {:ok, url(path)}
+          path -> {:ok, path}
         end
       end
 
       @doc """
+      Retrieves data for an asset by its name.
       """
-      @spec rm(String.t) :: :ok | error
-      def rm(name), do: Artifact.Storage.rm(@storage_name, name)
+      @spec get(String.t, opts) :: {:ok, String.t} | error
+      def get(name, opts \\ []) do
+        Artifact.Storage.get(@storage_name, name, opts)
+      end
 
       @doc """
+      Remove an asset by name.
       """
-      @spec url(String.t) :: String.t
-      def url(name) do
-        Path.join(@opts[:asset_url], name)
+      @spec rm(String.t, opts) :: :ok | error
+      def rm(name, opts \\ []) do
+        Artifact.Storage.rm(@storage_name, name, opts)
+      end
+
+      @doc """
+      Executes a command in the worker pool.
+      """
+      def exec(command, data \\ nil) do
+        :poolboy.transaction(@pool_name, fn (pid) ->
+          Artifact.Worker.perform(pid, command, data)
+        end)
       end
     end
   end

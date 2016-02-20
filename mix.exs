@@ -18,7 +18,7 @@ defmodule Artifact.Mixfile do
   end
 
   def application do
-    [applications: [:logger]]
+    [applications: [:logger, :porcelain]]
   end
 
   def package do

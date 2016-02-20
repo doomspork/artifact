@@ -19,14 +19,11 @@ defmodule Artifact.Storage.LocalTest do
 
   test "handle_call/3 for :put stores data" do
     in_tmp "handle_call/3 for :put stores data", fn ->
-      path = Path.join(System.cwd, "test")
-      filename = "test.txt"
-
-      opts = [storage_dir: path]
-      result = Local.handle_call({:put, "test", filename, []}, self, opts)
+      opts = [storage_dir: System.cwd]
+      result = Local.handle_call({:put, "test", "test.txt", []}, self, opts)
 
       assert {:reply, _name, _state} = result
-      assert_file Path.join(path, filename), fn file ->
+      assert_file  "test.txt", fn file ->
         assert file =~ ~S|test|
       end
     end
@@ -34,15 +31,13 @@ defmodule Artifact.Storage.LocalTest do
 
   test "handle_cast/2 for :rm removes file" do
     in_tmp "handle_cast/2 for :rm removes file", fn ->
-      filename = "test.txt"
-      path = Path.join(System.cwd, filename)
-      File.write!(path, "")
+      File.write!("test.txt", "")
 
-      assert_file path
+      assert_file "test.txt"
 
-      Local.handle_cast({:rm, filename}, [storage_dir: path])
+      Local.handle_cast({:rm, "test.txt", []}, [storage_dir: System.cwd])
 
-      refute_file Path.join(path, filename)
+      refute_file "test.txt"
     end
   end
 end

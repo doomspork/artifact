@@ -1,5 +1,7 @@
 # Artifact
 
+> File upload and on-the-fly processing for Elixir
+
 [![Build Status][travis-img]][travis] [![Hex Version][hex-img]][hex] [![License][license-img]][license]
 
 [travis-img]: https://travis-ci.org/doomspork/artifact.png?branch=master
@@ -9,68 +11,75 @@
 [license-img]: https://img.shields.io/badge/license-Apache%202.0-brightgreen.svg
 [license]: https://opensource.org/licenses/Apache-2.0
 
-___There isn't much to see here yet, Artifact is still under active development___
+___Artifact is under active development, join the fun!___
 
 ## Installation
 
-If [available in Hex](https://hex.pm/docs/publish), the package can be installed as:
+Add `artifact` to your list of dependencies in `mix.exs`:
 
-1. Add `artifact` to your list of dependencies in `mix.exs`:
+```elixir
+def deps do
+  [{:artifact, "~> 0.1.0"}]
+end
+```
+
+## Setup in 1-2-3
+
+1. Define a module and `use` Artifact:
 
 	```elixir
-	def deps do
-	  [{:artifact, "~> 0.1.0"}]
+	defmodule ImageUploader do
+  	  use Artifact, otp_app: :my_app
 	end
 	```
 
-## Setup
+2. Add the supervisor to your supervisor tree:
 
-Define a module to handle your files:
+	```elixir
+	def start(_type, _args) do
+  	  import Supervisor.Spec, warn: false
 
-```elixir
-defmodule ImageUploader do
-  use Artifact, otp_app: :my_app
-end
-```
+  	  children = [
+    	 supervisor(ImageUploader.Supervisor, [])
+  	  ]
 
-We need to add the generated supervisor to our supervisor tree:
+  	  opts = [strategy: :one_for_one, name: MyApp.Supervisor]
+     Supervisor.start_link(children, opts)
+   end
+   ```
 
-```elixir
-def start(_type, _args) do
-  import Supervisor.Spec, warn: false
+3. Update your router to include the generated plug:
 
-  children = [
-    supervisor(ImageUploader.Supervisor, [])
-  ]
-
-  opts = [strategy: :one_for_one, name: MyApp.Supervisor]
-  Supervisor.start_link(children, opts)
-end
-```
+	```elixir
+	forward "/images", ImageUploader.Endpoint
+	```
 
 ## Configuration
 
-Configure our module:
-
 ```elixir
 config :my_app, ImageUploader,
-  asset_url: "http://www.example.com/images" # defaults to "/images"
-```
+  asset_host: "http://www.example.com/images",
+  asset_url: "/:format/:name",
+  formats: %{
+    thumb: "convert -'[0]' -resize 50x50 -gravity center +repage -strip jpg:-"
+  }
 
-Lastly, we configure our storage:
-
-```elixir
 config :artifact, ImageUploader.Storage,
   type: Artifact.Storage.Local,
   storage_dir: Path.expand("../web/static/assets/images", __DIR__)
+
+config :artifact, ImageUploader.Pool,
+  pool_size: 1
 ```
 
 ## Use
 
 ```elixir
-iex> {:ok, full_path} = ImageUploader.put(data, name: "thumbnail.png")
-iex> full_path
-"http://www.example.com/images/thumbnail.png"
+iex> {:ok, name} = ImageUploader.put(data, name: "profile.png")
+iex> name
+"profile.png"
+iex> {:ok, url} = ImageUploader.URLHelpers.url(name, :thumb)
+"http://www.example.com/images/thumb/profile.png"
 ```
 
 ## License

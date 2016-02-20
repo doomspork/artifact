@@ -10,6 +10,7 @@ defmodule Artifact.Storage do
 
   @callback init(opts) :: opts
   @callback handle_call({:put, binary, String.t, opts}, pid, opts) :: reply
+  @callback handle_call({:get, String.t, opts}, pid, opts) :: reply
 
   @callback handle_cast({:rm, String.t}, opts) :: noreply
 
@@ -24,9 +25,13 @@ defmodule Artifact.Storage do
   end
 
   @doc false
-  def rm(mod, name) do
-    GenServer.cast(mod, {:rm, name})
+  def get(mod, name, opts) do
+    GenServer.call(mod, {:get, name, opts})
+  end
 
+  @doc false
+  def rm(mod, name, opts) do
+    GenServer.cast(mod, {:rm, name, opts})
     :ok
   end
 end

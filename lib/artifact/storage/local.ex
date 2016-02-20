@@ -23,8 +23,9 @@ defmodule Artifact.Storage.Local do
   Save data to the filesystem
   """
   def handle_call({:put, data, name, opts}, _from, state) do
+    opts = Keyword.merge(state, opts)
     result = name
-             |> maybe_mkdir(state ++ opts)
+             |> maybe_mkdir(opts)
              |> copy_data(data)
 
     reply = case result do
@@ -38,9 +39,22 @@ defmodule Artifact.Storage.Local do
   @doc """
   Remove a file
   """
-  def handle_cast({:rm, name}, state) do
+  def handle_call({:get, name, opts}, _from, state) do
+    opts = Keyword.merge(state, opts)
+    data = name
+           |> full_path(opts)
+           |> File.read
+
+    {:reply, data, state}
+  end
+
+  @doc """
+  Remove a file
+  """
+  def handle_cast({:rm, name, opts}, state) do
+    opts = Keyword.merge(state, opts)
     name
-    |> full_path(state)
+    |> full_path(opts)
     |> File.rm
 
     {:noreply, state}
