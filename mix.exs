@@ -1,14 +1,14 @@
 defmodule Artifact.Mixfile do
   use Mix.Project
 
-  @version "0.0.1"
+  @version "0.1.0"
 
   def project do
     [app: :artifact,
      build_embedded: Mix.env == :prod,
      deps: deps,
      description: """
-     File upload and manipulation for Elixir
+     File upload and on-the-fly processing for Elixir
      """,
      elixir: "~> 1.2",
      package: package,
