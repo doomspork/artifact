@@ -28,7 +28,7 @@ end
 1. Define a module and `use` Artifact:
 
 	```elixir
-	defmodule ImageUploader do
+	defmodule ExampleUploader do
   	  use Artifact, otp_app: :my_app
 	end
 	```
@@ -40,7 +40,7 @@ end
   	  import Supervisor.Spec, warn: false
 
   	  children = [
-    	 supervisor(ImageUploader.Supervisor, [])
+    	 supervisor(ExampleUploader.Supervisor, [])
   	  ]
 
   	  opts = [strategy: :one_for_one, name: MyApp.Supervisor]
@@ -51,35 +51,64 @@ end
 3. Update your router to include the generated plug:
 
 	```elixir
-	forward "/images", ImageUploader.Endpoint
+	forward "/images", ExampleUploader.Endpoint
 	```
 
 ## Configuration
 
 ```elixir
-config :my_app, ImageUploader,
+config :my_app, ExampleUploader,
   asset_host: "http://www.example.com/images",
   asset_url: "/:format/:name",
   formats: %{
     thumb: "convert -'[0]' -resize 50x50 -gravity center +repage -strip jpg:-"
   }
 
-config :artifact, ImageUploader.Storage,
+config :artifact, ExampleUploader.Storage,
   type: Artifact.Storage.Local,
   storage_dir: Path.expand("../web/static/assets/images", __DIR__)
 
-config :artifact, ImageUploader.Pool,
+config :artifact, ExampleUploader.Pool,
   pool_size: 1
 ```
 
 ## Use
 
 ```elixir
-iex> {:ok, name} = ImageUploader.put(data, name: "profile.png")
+iex> {:ok, name} = ExampleUploader.put(data, name: "profile.png")
 iex> name
 "profile.png"
-iex> {:ok, url} = ImageUploader.URLHelpers.url(name, :thumb)
+iex> {:ok, url} = ExampleUploader.URLHelpers.url(name, :thumb)
 "http://www.example.com/images/thumb/profile.png"
+```
+
+## Phoenix Integration
+
+Using Aritfact with Phoenix?  It may be helpful to update your `web/web.ex` to alias or import the uploader's url helpers:
+
+```elixir
+def view do
+  quote do
+    use Phoenix.View, root: "web/templates"
+
+    import Phoenix.Controller, only: [get_csrf_token: 0, get_flash: 2, view_module: 1]
+
+    use Phoenix.HTML
+	
+    # We'll use an alias with a shorter name
+    alias ExampleUploader.URLHelpers, as: Images
+
+    import BevReviews.Router.Helpers
+    import BevReviews.ErrorHelpers
+    import BevReviews.Gettext
+  end
+end
+```
+
+Now we can generate URLs in our markup:
+
+```erb
+<img class="img-responsive img-thumb" src="<%= Images.url(user.avatar, :thumb) %>" alt="">
 ```
 
 ## License
