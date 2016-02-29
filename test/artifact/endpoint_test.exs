@@ -7,7 +7,7 @@ defmodule Artifact.EndpointTest do
                            opts: Application.get_env(:artifact, ArtifactTest)
   end
 
-  test "" do
+  test "returns unaltered file for :original format" do
     resp = :get
            |> conn("/images/original/test.txt")
            |> BogusEndpoint.call([])
@@ -17,6 +17,25 @@ defmodule Artifact.EndpointTest do
     assert resp.resp_body == "test"
   end
 
-  def exec(_command, "test"), do: {:ok, "test"}
+  test "returns processed file for requested format" do
+    resp = :get
+           |> conn("/images/preview/test.txt")
+           |> BogusEndpoint.call([])
+
+    assert resp.state == :sent
+    assert resp.status == 200
+    assert resp.resp_body == "TEST"
+  end
+
+  test "returns 404 for missing format" do
+    resp = :get
+           |> conn("/images/missing_format/test.txt")
+           |> BogusEndpoint.call([])
+
+    assert resp.state == :sent
+    assert resp.status == 404
+  end
+
+  def exec(_command, str), do: {:ok, String.upcase(str)}
   def get(_name), do: {:ok, "test"}
 end

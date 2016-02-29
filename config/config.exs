@@ -3,7 +3,7 @@ use Mix.Config
 config :artifact, ArtifactTest,
   asset_url: "/images/:format/:name",
   formats: %{
-    preivew: "convert -'[0]' -resize 100x100 -gravity center +repage -strip jpg:-"
+    preview: "convert -'[0]' -resize 100x100 -gravity center +repage -strip jpg:-"
   }
 
 config :artifact, ArtifactTest.Storage,

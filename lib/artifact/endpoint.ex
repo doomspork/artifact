@@ -10,16 +10,20 @@ defmodule Artifact.Endpoint do
 
       @artifact unquote(module)
       @opts unquote(opts)
+      @formats @opts
+               |> Keyword.get(:formats, %{})
+               |> Map.keys
 
       plug :match
       plug :dispatch
 
       get @opts[:asset_url] do
         name = var!(name)
+        format = String.to_atom(var!(format))
 
         name
         |> @artifact.get
-        |> transform(var!(format))
+        |> transform(format)
         |> asset_resp(name, var!(conn))
       end
 
@@ -50,13 +54,15 @@ defmodule Artifact.Endpoint do
       end
 
       defp transform({:error, _error}, _format), do: nil
-      defp transform({:ok, data}, format) do
+      defp transform({:ok, data}, :original), do: data
+      defp transform({:ok, data}, format) when format in @formats do
         @opts
-        |> Keyword.get(:formats, %{})
-        |> Map.get(String.to_atom(format))
+        |> Keyword.get(:formats)
+        |> Map.get(format)
         |> exec(data)
         |> extract
       end
+      defp transform(_, _), do: nil
     end
   end
 end
