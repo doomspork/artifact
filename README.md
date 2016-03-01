@@ -94,7 +94,7 @@ def view do
     import Phoenix.Controller, only: [get_csrf_token: 0, get_flash: 2, view_module: 1]
 
     use Phoenix.HTML
-	
+
     # We'll use an alias with a shorter name
     alias ExampleUploader.URLHelpers, as: Images
 
