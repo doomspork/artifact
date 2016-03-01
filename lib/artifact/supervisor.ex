@@ -10,7 +10,10 @@ defmodule Artifact.Supervisor do
       @pool_name unquote(pool_name)
       @storage_name unquote(storage_name)
       @pool_opts Application.get_env(unquote(otp_app), @pool_name, [])
-      @storage_opts Application.get_env(unquote(otp_app), @storage_name, []) ++ [name: @storage_name]
+      @storage_opts unquote(otp_app)
+                    |> Application.get_env(@storage_name, [])
+                    |> Keyword.put(:name, @storage_name)
+                    |> Keyword.put_new(:type, Artifact.Storage.Local)
 
       def start_link(_opts \\ []) do
         Supervisor.start_link(__MODULE__, :ok)
