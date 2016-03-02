@@ -45,7 +45,7 @@ defmodule Artifact.Endpoint do
       defp extract({:error, _reason}), do: nil
 
       defp asset_resp(nil, _name, conn) do
-        send_resp(conn, 404, "File not found.")
+        send_resp(conn, 404, "404 Not Found")
       end
       defp asset_resp(data, name, conn) do
         type = content_type(name)
