@@ -9,7 +9,7 @@ defmodule Artifact.EndpointTest do
 
   test "returns unaltered file for :original format" do
     resp = :get
-           |> conn("/images/original/test.txt")
+           |> conn("/test/original/test.txt")
            |> BogusEndpoint.call([])
 
     assert resp.state == :sent
@@ -19,23 +19,25 @@ defmodule Artifact.EndpointTest do
 
   test "returns processed file for requested format" do
     resp = :get
-           |> conn("/images/preview/test.txt")
+           |> conn("/test/test_format/test.txt")
            |> BogusEndpoint.call([])
 
     assert resp.state == :sent
     assert resp.status == 200
-    assert resp.resp_body == "TEST"
+    assert resp.resp_body == "TSET"
   end
 
   test "returns 404 for missing format" do
     resp = :get
-           |> conn("/images/missing_format/test.txt")
+           |> conn("/test/missing_format/test.txt")
            |> BogusEndpoint.call([])
 
     assert resp.state == :sent
     assert resp.status == 404
   end
 
-  def exec(_command, str), do: {:ok, String.upcase(str)}
+  def exec([], data), do: data
+  def exec("upcase", data), do: String.upcase(data)
+  def exec("reverse", data), do: String.reverse(data)
   def get(_name), do: {:ok, "test"}
 end

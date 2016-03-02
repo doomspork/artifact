@@ -1,9 +1,9 @@
 use Mix.Config
 
 config :artifact, ArtifactTest,
-  asset_url: "/images/:format/:name",
+  asset_url: "/test/:format/:name",
   formats: %{
-    preview: "convert -'[0]' -resize 100x100 -gravity center +repage -strip jpg:-"
+    test_format: ["upcase", "reverse"]
   }
 
 config :artifact, ArtifactTest.Storage,

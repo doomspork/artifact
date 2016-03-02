@@ -10,9 +10,6 @@ defmodule Artifact.Endpoint do
 
       @artifact unquote(module)
       @opts unquote(opts)
-      @formats @opts
-               |> Keyword.get(:formats, %{})
-               |> Map.keys
 
       plug :match
       plug :dispatch
@@ -34,7 +31,12 @@ defmodule Artifact.Endpoint do
         |> Plug.MIME.type
       end
 
-      defp exec(nil, data), do: {:ok, data}
+      defp exec([], data), do: {:ok, data}
+      defp exec(nil, data), do: {:error, "unknown format type"}
+      defp exec([command|t], data) do
+        data = exec(command, data)
+        exec(t, data)
+      end
       defp exec(command, data) do
         @artifact.exec(command, data)
       end
@@ -55,7 +57,7 @@ defmodule Artifact.Endpoint do
 
       defp transform({:error, _error}, _format), do: nil
       defp transform({:ok, data}, :original), do: data
-      defp transform({:ok, data}, format) when format in @formats do
+      defp transform({:ok, data}, format) do
         @opts
         |> Keyword.get(:formats)
         |> Map.get(format)
