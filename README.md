@@ -64,11 +64,11 @@ config :my_app, ExampleUploader,
     thumb: "convert -'[0]' -resize 50x50 -gravity center +repage -strip jpg:-"
   }
 
-config :artifact, ExampleUploader.Storage,
+config :my_app, ExampleUploader.Storage,
   type: Artifact.Storage.Local,
   storage_dir: Path.expand("../web/static/assets/images", __DIR__)
 
-config :artifact, ExampleUploader.Pool,
+config :my_app, ExampleUploader.Pool,
   pool_size: 1
 ```
 
