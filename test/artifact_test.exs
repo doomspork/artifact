@@ -44,6 +44,22 @@ defmodule ArtifactTest do
     end
   end
 
+  test "get/1 retrieves default when data missing" do
+    in_tmp "get/1 retrieves default when data missing", fn ->
+      {:ok, data} = ArtifactTest.get("test.txt", storage_dir: System.cwd)
+
+      assert data == "default text\n"
+    end
+  end
+
+  test "get/1 returns error with data missing and default false" do
+    in_tmp "get/1 retrieves data", fn ->
+      {:error, reason} = ArtifactTest.get("test.txt", storage_dir: System.cwd, default: false)
+
+      assert reason == "missing data"
+    end
+  end
+
   test "exec/2 runs a command in the pool" do
     {:ok, output} = ArtifactTest.exec("ls")
     assert output =~ "LICENSE"

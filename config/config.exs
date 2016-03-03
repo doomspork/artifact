@@ -2,6 +2,7 @@ use Mix.Config
 
 config :artifact, ArtifactTest,
   asset_url: "/test/:format/:name",
+  default: "../support/default.txt",
   formats: %{
     test_format: ["upcase", "reverse"]
   }

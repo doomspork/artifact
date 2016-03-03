@@ -82,7 +82,13 @@ defmodule Artifact do
       """
       @spec get(String.t, opts) :: {:ok, String.t} | error
       def get(name, opts \\ []) do
-        Artifact.Storage.get(@storage_name, name, opts)
+        result = Artifact.Storage.get(@storage_name, name, opts)
+        default = Keyword.get(opts, :default, true)
+        case result do
+          {:error, _reason} when default -> default_data
+          {:error, _reason} -> {:error, "missing data"}
+          {:ok, _data} -> result
+        end
       end
 
       @doc """
@@ -100,6 +106,14 @@ defmodule Artifact do
         :poolboy.transaction(@pool_name, fn (pid) ->
           Artifact.Worker.perform(pid, command, data)
         end)
+      end
+
+      defp default_data do
+        case Keyword.get(@opts, :default) do
+          nil -> {:error, "missing default value"}
+          name ->
+            Artifact.Storage.get(@storage_name, name, default: false)
+        end
       end
     end
   end
