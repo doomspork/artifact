@@ -60,6 +60,7 @@ end
 config :my_app, ExampleUploader,
   asset_host: "http://www.example.com/images",
   asset_url: "/:format/:name",
+  default: "placeholder.png",
   formats: %{
     thumb: "convert -'[0]' -resize 50x50 -gravity center +repage -strip jpg:-"
   }
