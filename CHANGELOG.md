@@ -1,3 +1,11 @@
+## v0.3.0 (2016-03-03)
+
++ Enhancements
+  + Added support for arrays of transformations
+  + Support for default asset
+  + New default asset URL helpers
+  + 404 now uses a standard "Not Found" message
+
 ## v0.2.0 (2016-03-01)
 
 + Enhancements
