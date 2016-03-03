@@ -45,8 +45,11 @@ defmodule Artifact do
         @doc """
         Helper for creating URLs for files and formats.
         """
-        @spec url(String.t) :: String.t
-        def url(name, format \\ :original) do
+        @spec url(String.t | atom) :: String.t
+        def url(name, format \\ :original)
+
+        def url(:default, format), do: url(@opts[:default], format)
+        def url(name, format) do
           asset_url = @opts
                       |> Keyword.get(:asset_url)
                       |> String.replace(":format", Atom.to_string(format))
