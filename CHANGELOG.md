@@ -1,3 +1,9 @@
+## v0.4.0 (2016-03-19)
+
++ Enhancements
+  + Default support is now optional
+  + Refactor URLHelper and improve test coverage
+
 ## v0.3.0 (2016-03-03)
 
 + Enhancements
