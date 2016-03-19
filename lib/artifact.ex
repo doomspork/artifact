@@ -3,8 +3,6 @@ defmodule Artifact do
   File upload and manipulation for Elixir.
   """
 
-  @defaults [asset_url: "/images/:format/:name"]
-
   defmacro __using__(opts) do
     otp_app = Keyword.get(opts, :otp_app)
     unless otp_app, do: raise "Artifact requires an otp_app"
@@ -16,9 +14,7 @@ defmodule Artifact do
 
       module = __MODULE__
       app_env = Application.get_env(unquote(otp_app), module, [])
-      opts = unquote(@defaults)
-             |> Keyword.merge(app_env)
-             |> Keyword.merge(unquote(opts))
+      opts = app_env ++ unquote(opts)
 
       @opts opts
       @pool_name pool_name = Module.concat(module, Pool)
@@ -40,25 +36,7 @@ defmodule Artifact do
       defmodule URLHelpers do
         @moduledoc false
 
-        @opts opts
-
-        @doc """
-        Helper for creating URLs for files and formats.
-        """
-        @spec url(String.t | atom) :: String.t
-        def url(name, format \\ :original)
-
-        def url(:default, format), do: url(@opts[:default], format)
-        def url(name, format) do
-          asset_url = @opts
-                      |> Keyword.get(:asset_url)
-                      |> String.replace(":format", Atom.to_string(format))
-                      |> String.replace(":name", name)
-
-          @opts
-          |> Keyword.get(:asset_host, "/")
-          |> Path.join(asset_url)
-        end
+        use Artifact.URLHelpers, opts: unquote(opts)
       end
 
       @doc """
