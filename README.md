@@ -23,6 +23,22 @@ def deps do
 end
 ```
 
+Next, add :artifact to your list of applications:
+
+```elixir
+def application do
+  [applications: [:artifact]]
+end
+```
+
+Since ```artifact``` relies on external processes for transformations, it is recommended that you install the goon middleware. To install, download the package for your system and unzip the contents somewhere in your $PATH:
+
+```bash
+$ sudo tar zxf goon_darwin_amd64.tar.gz -C /usr/local/bin/
+```
+
+By default ```artifact``` uses the imagemagick software which is available via your os package manager, homebrew or from [http://www.imagemagick.org/](http://www.imagemagick.org/).
+
 ## Setup in 1-2-3
 
 1. Define a module and `use` Artifact:
@@ -111,6 +127,8 @@ Now we can generate URLs in our markup:
 ```erb
 <img class="img-responsive img-thumb" src="<%= Images.url(user.avatar, :thumb) %>" alt="">
 ```
+
+The value of ```user.avatar``` can be both a filename or a subpath from ```web/static/assets/images/```.
 
 ## License
 
