@@ -28,6 +28,7 @@ defmodule Artifact.Endpoint do
         name
         |> Path.extname
         |> String.downcase
+        |> String.lstrip(?.)
         |> Plug.MIME.type
       end
 
@@ -49,7 +50,6 @@ defmodule Artifact.Endpoint do
       end
       defp asset_resp(data, name, conn) do
         type = content_type(name)
-
         conn
         |> put_resp_content_type(type)
         |> send_resp(200, data)
