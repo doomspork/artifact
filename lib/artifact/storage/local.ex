@@ -24,14 +24,17 @@ defmodule Artifact.Storage.Local do
   """
   def handle_call({:put, data, name, opts}, _from, state) do
     opts = Keyword.merge(state, opts)
-    result = name
-             |> maybe_mkdir(opts)
-             |> copy_data(data)
 
-    reply = case result do
-              :ok -> name
-              error -> error
-            end
+    result =
+      name
+      |> maybe_mkdir(opts)
+      |> copy_data(data)
+
+    reply =
+      case result do
+        :ok -> name
+        error -> error
+      end
 
     {:reply, reply, state}
   end
@@ -41,9 +44,11 @@ defmodule Artifact.Storage.Local do
   """
   def handle_call({:get, name, opts}, _from, state) do
     opts = Keyword.merge(state, opts)
-    data = name
-           |> full_path(opts)
-           |> File.read
+
+    data =
+      name
+      |> full_path(opts)
+      |> File.read()
 
     {:reply, data, state}
   end
@@ -53,9 +58,10 @@ defmodule Artifact.Storage.Local do
   """
   def handle_cast({:rm, name, opts}, state) do
     opts = Keyword.merge(state, opts)
+
     name
     |> full_path(opts)
-    |> File.rm
+    |> File.rm()
 
     {:noreply, state}
   end
@@ -71,15 +77,16 @@ defmodule Artifact.Storage.Local do
   defp full_path(path, opts) do
     opts[:storage_dir]
     |> Path.join(path)
-    |> Path.expand
+    |> Path.expand()
   end
 
   defp maybe_mkdir(path, opts) do
     path = full_path(path, opts)
 
-    result = path
-              |> Path.dirname
-              |> File.mkdir_p
+    result =
+      path
+      |> Path.dirname()
+      |> File.mkdir_p()
 
     case result do
       :ok -> {:ok, path}

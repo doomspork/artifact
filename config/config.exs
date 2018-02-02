@@ -11,5 +11,4 @@ config :artifact, ArtifactTest.Storage,
   type: Artifact.Storage.Local,
   storage_dir: Path.expand("../test/tmp", __DIR__)
 
-config :artifact, ArtifactTest.Pool,
-  pool_size: 1
+config :artifact, ArtifactTest.Pool, pool_size: 1

@@ -3,14 +3,16 @@ defmodule Artifact.EndpointTest do
   use Plug.Test
 
   defmodule BogusEndpoint do
-    use Artifact.Endpoint, mod: Artifact.EndpointTest,
-                           opts: Application.get_env(:artifact, ArtifactTest)
+    use Artifact.Endpoint,
+      mod: Artifact.EndpointTest,
+      opts: Application.get_env(:artifact, ArtifactTest)
   end
 
   test "returns unaltered file for :original format" do
-    resp = :get
-           |> conn("/test/original/test.txt")
-           |> BogusEndpoint.call([])
+    resp =
+      :get
+      |> conn("/test/original/test.txt")
+      |> BogusEndpoint.call([])
 
     assert resp.state == :sent
     assert resp.status == 200
@@ -19,9 +21,10 @@ defmodule Artifact.EndpointTest do
   end
 
   test "returns processed file for requested format" do
-    resp = :get
-           |> conn("/test/test_format/test.txt")
-           |> BogusEndpoint.call([])
+    resp =
+      :get
+      |> conn("/test/test_format/test.txt")
+      |> BogusEndpoint.call([])
 
     assert resp.state == :sent
     assert resp.status == 200
@@ -30,14 +33,14 @@ defmodule Artifact.EndpointTest do
   end
 
   test "returns 404 for missing format" do
-    resp = :get
-           |> conn("/test/missing_format/test.txt")
-           |> BogusEndpoint.call([])
+    resp =
+      :get
+      |> conn("/test/missing_format/test.txt")
+      |> BogusEndpoint.call([])
 
     assert resp.state == :sent
     assert resp.status == 404
   end
-
 
   def exec([], data), do: data
   def exec("upcase", data), do: String.upcase(data)

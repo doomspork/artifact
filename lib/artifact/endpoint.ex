@@ -19,25 +19,27 @@ defmodule Artifact.Endpoint do
         format = String.to_atom(var!(format))
 
         name
-        |> @artifact.get
+        |> @artifact.get()
         |> transform(format)
         |> asset_resp(name, var!(conn))
       end
 
       defp content_type(name) do
         name
-        |> Path.extname
-        |> String.downcase
+        |> Path.extname()
+        |> String.downcase()
         |> String.lstrip(?.)
-        |> Plug.MIME.type
+        |> Plug.MIME.type()
       end
 
       defp exec([], data), do: {:ok, data}
       defp exec(nil, data), do: {:error, "unknown format type"}
-      defp exec([command|t], data) do
+
+      defp exec([command | t], data) do
         data = exec(command, data)
         exec(t, data)
       end
+
       defp exec(command, data) do
         @artifact.exec(command, data)
       end
@@ -48,8 +50,10 @@ defmodule Artifact.Endpoint do
       defp asset_resp(nil, _name, conn) do
         send_resp(conn, 404, "404 Not Found")
       end
+
       defp asset_resp(data, name, conn) do
         type = content_type(name)
+
         conn
         |> put_resp_content_type(type)
         |> send_resp(200, data)
@@ -57,6 +61,7 @@ defmodule Artifact.Endpoint do
 
       defp transform({:error, _error}, _format), do: nil
       defp transform({:ok, data}, :original), do: data
+
       defp transform({:ok, data}, format) do
         @opts
         |> Keyword.get(:formats)
@@ -64,6 +69,7 @@ defmodule Artifact.Endpoint do
         |> exec(data)
         |> extract
       end
+
       defp transform(_, _), do: nil
     end
   end

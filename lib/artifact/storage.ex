@@ -9,10 +9,10 @@ defmodule Artifact.Storage do
   @type noreply :: {:noreply, any}
 
   @callback init(opts) :: opts
-  @callback handle_call({:put, binary, String.t, opts}, pid, opts) :: reply
-  @callback handle_call({:get, String.t, opts}, pid, opts) :: reply
+  @callback handle_call({:put, binary, String.t(), opts}, pid, opts) :: reply
+  @callback handle_call({:get, String.t(), opts}, pid, opts) :: reply
 
-  @callback handle_cast({:rm, String.t}, opts) :: noreply
+  @callback handle_cast({:rm, String.t()}, opts) :: noreply
 
   @doc false
   def start_link(opts) do

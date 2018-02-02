@@ -21,10 +21,12 @@ defmodule Artifact.Worker do
   """
   def handle_call({:cli, command, data}, _from, state) do
     opts = [in: data, out: :iodata]
-    result = case Porcelain.shell(command, opts) do
-               %Porcelain.Result{status: 0, out: out} -> {:ok, IO.iodata_to_binary(out)}
-               _ -> {:error, :cli_failure}
-             end
+
+    result =
+      case Porcelain.shell(command, opts) do
+        %Porcelain.Result{status: 0, out: out} -> {:ok, IO.iodata_to_binary(out)}
+        _ -> {:error, :cli_failure}
+      end
 
     {:reply, result, state}
   end
