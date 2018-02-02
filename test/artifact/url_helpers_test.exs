@@ -6,7 +6,8 @@ defmodule Artifact.URLHelpersTest do
   end
 
   defmodule WithAssetOpts do
-    use Artifact.URLHelpers, opts: [asset_host: "http://www.example.com", asset_url: "/:format/:name"]
+    use Artifact.URLHelpers,
+      opts: [asset_host: "http://www.example.com", asset_url: "/:format/:name"]
   end
 
   defmodule Without do

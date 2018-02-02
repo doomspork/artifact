@@ -7,22 +7,24 @@ defmodule Artifact.URLHelpers do
 
   defmacro __using__(opts: opts) do
     defaults = Helpers.default_helpers(opts[:default])
+
     quote do
       @opts unquote(opts)
 
       @doc """
       Helper for creating URLs for files and formats.
       """
-      @spec url(String.t | atom) :: String.t
+      @spec url(String.t() | atom) :: String.t()
       def url(name, format \\ :original)
 
       unquote(defaults)
 
       def url(name, format) do
-        asset_url = @opts
-                    |> Keyword.get(:asset_url, "/images/:format/:name")
-                    |> String.replace(":format", Atom.to_string(format))
-                    |> String.replace(":name", name)
+        asset_url =
+          @opts
+          |> Keyword.get(:asset_url, "/images/:format/:name")
+          |> String.replace(":format", Atom.to_string(format))
+          |> String.replace(":name", name)
 
         @opts
         |> Keyword.get(:asset_host, "/")
